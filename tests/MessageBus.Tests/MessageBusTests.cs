@@ -1,64 +1,101 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using Isc.MessageBus.Tests.Fakes;
 using Xunit;
 
 namespace Isc.MessageBus.Tests
 {
-    public class MessageBusTests
+    public sealed class MessageBusTests
     {
         [Fact]
-        public void Publish_WithNoSubscriptions_DoesNothing()
+        public void MessageBus_Implementation_ImplementsIMessageBus()
         {
             // Arrange
-            var bus = new MessageBus<string>();
-
-            // Act
-            bus.Publish("hello!");
-        }
-
-        public static IEnumerable<object[]> X() =>
-            new List<object[]>
-            {
-                new object[] { new[] { 1, 2, 3 } },
-                new object[] { new List<int> { 1, 2, 3 } },
-            };
-
-        [Theory]
-        [InlineData(new[] { 1, 2, 3 })]
-        //[MemberData(nameof(X))]
-        //[InlineData("")]
-        //[InlineData(null)]
-        public void Publish_SingleHandler_ReceivesTheValue(ICollection<int> value)
-        {
-            // Arrange
-            ICollection<int> stringHandler_value = null;
-            int[] lHandler_value = null;
-
-            var bus = new MessageBus<ICollection<int>>();
-            bus.Subscribe<ICollection<int>>(v => { stringHandler_value = v; return false; });
-            bus.Subscribe<int[]>(v => { lHandler_value = v; return false; });
-
-            // Act
-            bus.Publish(value);
+            var bus = new MessageBus<Exception>();
 
             // Assert
-            Assert.Same(stringHandler_value, value);
-            Assert.Same(lHandler_value, value);
+            Assert.True(bus is IMessageBus<Exception>);
         }
 
-        public bool NumberReceived0(int number)
+        [Fact]
+        public void MessageBus_Implementation_ImplementsIMessagePublisher()
         {
-            Console.WriteLine($"[0] {number}");
+            // Arrange
+            var bus = new MessageBus<Exception>();
 
-            return false;
+            // Assert
+            Assert.True(bus is IMessagePublisher<Exception>);
         }
 
-        public bool NumberReceived1(int number)
+        [Theory]
+        [InlineData("isc")]
+        [InlineData("")]
+        [InlineData(null)]
+        public void Publish_WithNoSubscriptions_DoesNothing(string message)
         {
-            Console.WriteLine($"[1] {number}");
+            // Arrange
+            IMessageBus<string> bus = new MessageBus<string>();
 
-            return false;
+            // Act
+            bus.Publish(message);
+        }
+
+        [Theory]
+        [InlineData("isc")]
+        [InlineData("")]
+        [InlineData(null)]
+        public void Publish_SingleHandler_ReceivesTheMessage(string message)
+        {
+            // Arrange
+            IMessageBus<string> bus = new MessageBus<string>();
+            var handler = new HandlerSpy<string>();
+
+            bus.Subscribe<string>(handler.Delegate);
+
+            // Act
+            bus.Publish(message);
+
+            // Assert
+            Assert.Equal(message, handler.Messages[0]);
+        }
+
+        [Fact]
+        public void Publish_SingleHandlerMultipleTimes_GetsCalledOnce()
+        {
+            // Arrange
+            IMessageBus<string> bus = new MessageBus<string>();
+            var handler = new HandlerSpy<string>();
+
+            // Act
+            bus.Subscribe<string>(handler.Delegate);
+            bus.Subscribe<string>(handler.Delegate);
+            bus.Subscribe<string>(handler.Delegate);
+
+            bus.Publish(string.Empty);
+
+            // Assert
+            Assert.Equal(1, handler.Messages.Count);
+        }
+
+        [Theory]
+        [InlineData("isc")]
+        [InlineData("")]
+        [InlineData(null)]
+        public void Publish_MultipleHandlers_AllReceiveTheMessage(string message)
+        {
+            // Arrange
+            var bus = MessageBus<string>.Empty;
+            var handler0 = new HandlerSpy<string>();
+            var handler1 = new HandlerSpy<string>();
+
+            bus.Subscribe<string>(handler0.Delegate);
+            bus.Subscribe<string>(handler1.Delegate);
+
+            // Act
+            bus.Publish(message);
+
+            // Assert
+            Assert.Equal(message, handler0.Messages[0]);
+            Assert.Equal(message, handler1.Messages[0]);
         }
     }
 }

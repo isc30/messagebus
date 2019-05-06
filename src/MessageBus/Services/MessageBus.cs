@@ -7,6 +7,8 @@ namespace Isc.MessageBus
     public sealed class MessageBus<TMessage>
         : IMessageBus<TMessage>
     {
+        public static MessageBus<TMessage> Empty => new MessageBus<TMessage>();
+
         private ConcurrentDictionary<Type, Delegate> _handlers
             = new ConcurrentDictionary<Type, Delegate>();
 
@@ -19,7 +21,7 @@ namespace Isc.MessageBus
             {
                 var typedDelegate = (MessageHandler<T>)handlerTypes.Value;
 
-                stopPropagation |= (typedDelegate?.Invoke(message) ?? false);
+                typedDelegate?.Invoke(message);
             }
 
             if (!stopPropagation)
@@ -36,7 +38,7 @@ namespace Isc.MessageBus
             lock (_handlers)
             {
                 _handlers.GetOrAdd(messageType, (MessageHandler<T>)null);
-                _handlers[messageType] = (MessageHandler<T>)_handlers[messageType] + handler;
+                _handlers[messageType] = _handlers[messageType].AddHandler(handler);
             }
         }
 
@@ -48,7 +50,7 @@ namespace Isc.MessageBus
             lock (_handlers)
             {
                 _handlers.GetOrAdd(messageType, (MessageHandler<T>)null);
-                _handlers[messageType] = (MessageHandler<T>)_handlers[messageType] - handler;
+                _handlers[messageType] = _handlers[messageType].RemoveHandler(handler);
             }
         }
 

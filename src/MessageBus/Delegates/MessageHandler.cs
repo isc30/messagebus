@@ -1,4 +1,4 @@
 ﻿namespace Isc.MessageBus
 {
-    public delegate bool MessageHandler<in TMessage>(TMessage message);
+    public delegate void MessageHandler<in TMessage>(TMessage message);
 }
