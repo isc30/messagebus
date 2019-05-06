@@ -1,6 +1,8 @@
 language: csharp
 dist: trusty
 sudo: required
+mono: none
+dotnet: 3.0.100-preview4-011223
 script:
   - dotnet restore
   - dotnet build
