@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/isc30/messagebus.svg?branch=master)](https://travis-ci.org/isc30/messagebus)
+
 A simple MessageBus implementation for .NET Standard 2.0
 <br/><br/>
 
