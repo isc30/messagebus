@@ -9,7 +9,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{11A26714-890
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{86E9A93C-9FD4-4A7E-8899-8139A37A82BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBus.Tests", "tests\MessageBus.Tests\MessageBus.Tests.csproj", "{DB4462C2-A911-4B49-ACB6-58FE8480F54B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBus.Tests", "tests\MessageBus.Tests\MessageBus.Tests.csproj", "{DB4462C2-A911-4B49-ACB6-58FE8480F54B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A8FE21AC-34E9-4D6D-8321-DEEBF6EEE209}"
+	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
