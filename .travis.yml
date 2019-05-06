@@ -1,7 +1,10 @@
 language: csharp
 mono: none
 dotnet: 2.1.502
-script:
+
+install:
   - dotnet restore
+
+script:
   - dotnet build
   - dotnet test
