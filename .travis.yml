@@ -1,0 +1,7 @@
+language: csharp
+dist: trusty
+sudo: required
+script:
+  - dotnet restore
+  - dotnet build
+  - dotnet test
